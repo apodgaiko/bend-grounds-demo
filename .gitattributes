@@ -1,0 +1,2 @@
+# Bend is its own language; do not classify it as a different language.
+*.bend linguist-language=Bend linguist-detectable=true

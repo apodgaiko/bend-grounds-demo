@@ -34,7 +34,15 @@ def policy(obs, rng, state):
 
 This intentionally passive example shows the interface, not a competitive strategy. The supplied example policy recruits and deploys units. `rng` is a client random generator; `state` is policy memory maintained by the harness. Return exactly one legal action and inspect the next observation before choosing again. A nonlegal return fails the client run.
 
-Built-in client policies include `first`, `random`, `tempo`, `econ`, `climber` and `bot`. `bot` sends `auto`, delegating the acting seat's turn to the Bend bot.
+Built-in client policies include `first`, `random`, `tempo`, `econ`, `climber` and `bot`. **`bot` is Rook**, the native Bend 2 heuristic opponent included in the engine: it sends `auto`, delegating the acting seat's whole turn to Bend, then ending the turn. Its tempo/economy/climber styles depend on the seat; they are not the same implementations as the similarly named Python client policies. No model download or API key is required.
+
+Run a four-Rook lobby after building the native runner:
+
+```sh
+python3 scripts/agent.py --backend fast selfplay --seed 4242 --policies bot
+```
+
+See [Meet Rook](../README.md#meet-rook) for browser play and additional commands.
 
 **Trust boundary:** policy modules run as ordinary local Python. They are not sandboxed. Only load code you trust. There is no integrated external model service or required API key.
 

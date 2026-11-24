@@ -1,10 +1,68 @@
-# Bend Grounds
+<div align="center">
 
-**A small autobattler with its authoritative game engine and native HTTP backend written in Bend 2.** Play in the browser, watch built-in bots, or bring your own agent.
+# Ember · Bend Grounds
 
-Four players recruit units, build a warband and fight automatic battles. Spend gold on immediate power or invest in later rounds; combine three copies into a golden unit and scout your next opponent. There are 44 cards, three tribes plus Neutral units, five tiers and up to 14 rounds.
+**An autobattler where Bend 2 owns the game—not just a demo function.**
+
+[![Bend 2](https://img.shields.io/badge/engine-Bend_2-8b83b5)](engine/game.bend)
+[![Native HTTP](https://img.shields.io/badge/backend-native_HTTP-b38b43)](engine/main.bend)
+[![Rook included](https://img.shields.io/badge/bot-Rook_included-517a62)](#meet-rook)
+[![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+[Play locally](#build-and-play-locally) · [Inside Bend](#why-bend) · [Run Rook](#meet-rook) · [Agent API](docs/AGENTS-API.md) · [Verification](docs/VERIFICATION.md)
+
+![Round-five recruiting with a populated golden warband, shop, scouting and four-player lobby](docs/images/recruiting.jpg)
+
+**4 players · 44 cards · Golden merges · Seeded replays · Bring your own agent**
+
+</div>
+
+Recruit a warband, build an economy and watch it clash. Combine three copies into a golden unit, scout the next opponent, and decide whether to buy power now or invest in later rounds. Play one seat against **Rook**, watch the bots, or plug in your own policy.
+
+**Runs locally.** No hosted demo, model download or API key is required. The authoritative engine, built-in bots, observations, legal actions and native HTTP backend are written in Bend 2; the browser is a vanilla JavaScript client.
+
+## Build and play locally
+
+Requirements: Git, [Bun](https://bun.sh), a compatible Clang toolchain, Python 3, `curl` and `shasum`. Python game clients use only the standard library. The existing development baseline is macOS; portability is not claimed. See [Toolchain](docs/TOOLCHAIN.md) for the compiler pin and proof prerequisites.
+
+From the repository root:
+
+```sh
+bash scripts/setup.sh
+bash scripts/build.sh
+bash scripts/start.sh --fg
+```
+
+Open **http://127.0.0.1:8765** in your browser. Choose **Versus bots** to play one seat against three built-in Bend bots. Stop a foreground server with Ctrl+C.
+
+On macOS, `./Play.command` checks the toolchain and native build provenance, rebuilds if needed, starts a background server and opens the browser. You can also start a background server directly:
+
+```sh
+bash scripts/start.sh
+```
+
+Foreground mode is recommended for simple lifecycle control. There is no automatic stop command: for a background server, inspect the process before stopping it; PID files are informational only. A second launch refuses to adopt a server already answering on the selected port. Stop that process explicitly after identifying it, or choose another port, for example `BG_PORT=8766 bash scripts/start.sh --fg`.
+
+The build invokes the pinned Bend compiler with Bun and produces three native executables: `build/server`, `build/cli` and `build/runner`, plus provenance manifests. Bun runs the compiler, not the game server. Rebuild after changing Bend sources; the agent transports reject missing or stale native builds rather than silently selecting another backend.
+
+## A look inside
+
+<table>
+<tr>
+<td width="50%"><a href="docs/images/combat.jpg"><img src="docs/images/combat.jpg" alt="Battle report with opposing units and step-by-step combat playback"></a></td>
+<td width="50%"><a href="docs/images/agent-api.jpg"><img src="docs/images/agent-api.jpg" alt="In-game Agent API panel with endpoints, move grammar and a minimal agent loop"></a></td>
+</tr>
+<tr>
+<td><strong>Replay every clash.</strong> Step through combat events and board snapshots supplied by Bend.</td>
+<td><strong>Bring your own agent.</strong> Humans and policies act through the same rules engine.</td>
+</tr>
+</table>
+
+Screenshots are from a real local game, seed `467561`. Click to inspect the full-size images.
 
 ## Why Bend?
+
+This is a small end-to-end case study for the language: can the same Bend 2 codebase describe a playable state machine, serve it to a browser, expose it to agents, and state laws about its real transitions?
 
 Bend is not a wrapper around a JavaScript game here. It owns the game:
 
@@ -12,6 +70,19 @@ Bend is not a wrapper around a JavaScript game here. It owns the game:
 - **The interface to the rules:** legal actions, private/public observations, generated card text and JSON encoding also live in Bend. Humans and agents act through the same engine.
 - **The native HTTP backend:** [main.bend](engine/main.bend) handles HTTP parsing, routing, static-file responses and TCP serving. There is no Python or JavaScript application server behind it.
 - **Executable rules alongside explicit laws:** the proof files import the real engine. They do not prove a separate simplified model and assume it matches the game.
+
+### A short source tour for language implementers
+
+| Question | Start here |
+| --- | --- |
+| What does a nontrivial application look like in Bend 2? | [The game state machine](engine/game.bend): recruiting, economy, combat, golden merges and round progression. |
+| Can the application own its I/O boundary? | [The native server](engine/main.bend): TCP serving, HTTP parsing/routing and static responses, with an explicitly `@unsafe` unbounded accept loop. |
+| Can browser play and agent experiments share the semantics? | [CLI](engine/cli.bend) and [persistent runner](engine/runner.bend), alongside the HTTP interface; no second rules implementation in Python or JavaScript. |
+| Do dependent laws touch executable application code? | [Economy laws](LAWS.bend), [recursive proofs](PROOF.bend), and [state-bound invariants](tests/engine_invariants.bend) import the real functions. |
+
+The interesting boundary is between **executable rules, explicit laws and real I/O**—not a claim that the entire application has been proved. This release is a concrete application to read, run and question, rather than a GPU benchmark or a toy arithmetic-only proof.
+
+### A law about the actual economy
 
 For example, this statement from [LAWS.bend](LAWS.bend) says an affordable payment leaves exactly the remainder, for **every** natural-number cost and remainder:
 
@@ -40,29 +111,7 @@ Agent client ────────> HTTP / native CLI / native runner
 
 This targets the pinned **Bend 2** implementation in `bendlang/bend`, not the original Bend implementation commonly associated with HVM. It demonstrates neither GPU execution nor automatic parallel speedups, and makes no current performance claim.
 
-## Build and play locally
-
-Requirements: Git, [Bun](https://bun.sh), a compatible Clang toolchain, Python 3, `curl` and `shasum`. Python game clients use only the standard library. The existing development baseline is macOS; portability is not claimed. See [Toolchain](docs/TOOLCHAIN.md) for the compiler pin and proof prerequisites.
-
-From the repository root:
-
-```sh
-bash scripts/setup.sh
-bash scripts/build.sh
-bash scripts/start.sh --fg
-```
-
-Open **http://127.0.0.1:8765** in your browser. Choose **Versus bots** to play one seat against three built-in Bend bots. Stop a foreground server with Ctrl+C.
-
-On macOS, `./Play.command` checks the toolchain and native build provenance, rebuilds if needed, starts a background server and opens the browser. You can also start a background server directly:
-
-```sh
-bash scripts/start.sh
-```
-
-Foreground mode is recommended for simple lifecycle control. There is no automatic stop command: for a background server, inspect the process before stopping it; PID files are informational only. A second launch refuses to adopt a server already answering on the selected port. Stop that process explicitly after identifying it, or choose another port, for example `BG_PORT=8766 bash scripts/start.sh --fg`.
-
-The build invokes the pinned Bend compiler with Bun and produces three native executables: `build/server`, `build/cli` and `build/runner`, plus provenance manifests. Bun runs the compiler, not the game server. Rebuild after changing Bend sources; the agent transports reject missing or stale native builds rather than silently selecting another backend.
+**About GitHub's language bar:** this repository contains 14 Bend source/proof files. [Bend support is present in Linguist's source](https://github.com/github-linguist/linguist/blob/cfd7a0113aa1efab99faeff38756f0ed4d48add8/lib/linguist/languages.yml#L683-L692), but GitHub's deployed detector may lag behind it. `.gitattributes` explicitly identifies `*.bend` as Bend; the language bar is not a map of which language owns the game.
 
 ## How to play
 
@@ -82,6 +131,27 @@ Start with 40 HP. Each round brings fresh gold; unspent gold does not carry over
 Three regular copies across hand and board assemble into one golden card in your hand. Merges can change indexes: agents should read the new observation after each action. The in-game **Rules** panel and `/api/rules` provide the card list, costs and detailed mechanics directly from Bend.
 
 **Watch bots:** open the **Commands** tab and choose **Autoplay to the end**. **Autopilot turn** delegates only the current turn. **Manual control** lets you act for each seat in turn. The **Transcript** tab can copy a replay link.
+
+## Meet Rook
+
+**Rook is included: our native Bend 2 heuristic bot, not a trained language model.** In **Versus bots**, it controls your three opponents. Its seat-dependent styles—**tempo, economy and climber**—make different spending and tiering choices.
+
+The implementation lives in [`bot_choice` and `bot_play`](engine/game.bend). The CLI name is **`bot`**: it sends `auto` to Bend, delegating the entire turn to the native policy. There is no separate Python port to drift out of sync, no weights to fetch and no inference service.
+
+After setup and build:
+
+```sh
+# Rook in your seat against the three built-in Rook opponents.
+python3 scripts/agent.py --backend fast play --seed 4242 --policy bot
+
+# A four-Rook lobby, with every seat controlled by the native bot.
+python3 scripts/agent.py --backend fast selfplay --seed 4242 --policies bot
+
+# Play interactively in the terminal against three Rook seats.
+python3 scripts/agent.py --backend fast human --seed 4242 --policies bot,bot,bot
+```
+
+To play against Rook in the browser, start the server and choose **Versus bots**. To watch a whole game, open **Commands → Autoplay to the end**. Rook is a reproducible baseline for your own policies, not a claim of optimal or balanced play.
 
 ## Bring an agent
 
