@@ -182,6 +182,10 @@ python3 scripts/agent.py replay build/replay.json
 
 See [Agent API](docs/AGENTS-API.md) for modes, protocol 3, observations and the plugin contract. This is an interface for writing agents, not a bundled trained language-model opponent.
 
+## Built with agents
+
+AI agents working in **Pi + OptChat** wrote most of the implementation; Aleksandr Podgaiko steered the project and made the final calls. The interesting part was not agent count, but coordinating ownership, checking results and turning a research workspace into a playable release. [A short workflow retrospective](docs/AGENT-WORKFLOW.md) covers what worked, what failed, and why local mock success was not enough.
+
 ## Verification and limitations
 
 The canonical source-based release gate is:
