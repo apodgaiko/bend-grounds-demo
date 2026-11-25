@@ -27,6 +27,8 @@ The HTTP suites cover API, security, protocol 3, protocol plumbing and card inte
 7. `tests/v3_growth_laws.bend`
 8. `tests/card_interactions.bend`
 
+`scripts/verify.sh` uses a fixed file list, not automatic discovery. When adding a new proof file, add it to the verdict loop in that script and the list above; a gate PASS alone does not cover an unlisted file. Run and report a focused verdict for the affected file as well.
+
 These files contain different kinds of checks; eight verdict invocations do not mean eight universal full-game proofs. The gate does not automate a complete browser playthrough. The description above follows `scripts/verify.sh`; no current execution result is claimed here.
 
 ## 1. Compiler and build checks
@@ -51,6 +53,14 @@ bun vendor/bend/bend2/main.ts tests/action_laws.bend --verdict
 bun vendor/bend/bend2/main.ts tests/damage_laws.bend --verdict
 bun vendor/bend/bend2/main.ts tests/v4_golden_laws.bend --verdict
 ```
+
+For any affected Bend proof file, the general focused command is (replace `<file>` with its repository-relative path):
+
+```sh
+bun vendor/bend/bend2/main.ts <file> --verdict
+```
+
+The focused run checks only that file and its dependencies; it does not replace the release gate.
 
 These files import the actual economy/engine functions. Representative statements:
 

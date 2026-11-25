@@ -145,7 +145,7 @@
         <p class="muted small">The whole game is this seed plus this move list. The server replays it on every request.</p>
         <ol class="moves" id="moves"></ol>
         <div class="row gap">
-          <button class="btn small" id="btnCopyUrl" type="button" title="A link to this page that replays this game (protocol 2)">Copy replay link</button>
+          <button class="btn small" id="btnCopyUrl" type="button" title="A link to this page that replays this game (protocol 3)">Copy replay link</button>
           <button class="btn small" id="btnCopyApi" type="button" title="The /api/game URL for agents">Copy API URL</button>
           <button class="btn small" id="btnCopyMoves" type="button">Copy moves</button>
         </div>
@@ -216,7 +216,7 @@
         <h3>Endpoints</h3>
         <table class="doc-table">
           <tr><th scope="row"><code>GET /api/rules</code></th><td>Units, tribes, tiers, costs and action grammar (JSON).</td></tr>
-          <tr><th scope="row"><code>GET /api/game?seed=S&amp;moves=M</code></th><td>Replays comma-separated moves <code>M</code> from seed <code>S</code>; returns the observation for the acting seat including <code>legalActions</code>.</td></tr>
+          <tr><th scope="row"><code>GET /api/game?v=3&amp;seed=S&amp;moves=M</code></th><td>Replays comma-separated moves <code>M</code> from seed <code>S</code>; returns the observation for the acting seat including <code>legalActions</code>.</td></tr>
           <tr><th scope="row"><code>GET /api/health</code></th><td>Liveness.</td></tr>
         </table>
         <h3>Move grammar</h3>
@@ -227,7 +227,7 @@
         <h3>Minimal agent loop</h3>
 <pre class="code">moves = []
 while True:
-    s = GET("/api/game?seed=42&amp;moves=" + ",".join(moves))
+    s = GET("/api/game?v=3&amp;seed=42&amp;moves=" + ",".join(moves))
     if s["phase"] == "finished": break
     moves.append(choose(s["legalActions"], s))   # your policy</pre>
         <h3>Modes and self-play</h3>
@@ -261,10 +261,11 @@ while True:
     <div class="modal-body">
       <header class="modal-head"><h2 id="legacyLinkH">Old replay link</h2></header>
       <p>This link does not say which protocol it was made for. Links made before protocol 2 meant something else by the same moves: <code>buy</code> used to put a unit straight on the warband, and now it goes to your hand.</p>
+      <p>This reinterprets the moves under current protocol 3; it does not reproduce their unknown original rules.</p>
       <p class="muted small" id="legacyLinkInfo"></p>
       <div class="row gap end">
         <button class="btn ghost" id="btnLegacyFresh" type="button">Ignore link</button>
-        <button class="btn primary" id="btnLegacyReplay" type="button">Replay under protocol 2</button>
+        <button class="btn primary" id="btnLegacyReplay" type="button">Replay under current protocol (3)</button>
       </div>
     </div>
   </dialog>

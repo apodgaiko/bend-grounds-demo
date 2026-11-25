@@ -25,6 +25,8 @@ For setup, building and play:
 - Python 3 (standard library only for game clients and build helpers);
 - `shasum` and `curl` for build/start helpers.
 
+Direct commands require `bun` and, for proofs, elan’s `lean`/`leanc` on `PATH`. The build and verification scripts add `~/.bun/bin` and `~/.elan/bin` themselves.
+
 The development baseline is macOS. Other platforms are not claimed supported by these instructions. The optional `Play.command` launcher uses macOS `open`; the foreground server command does not open a browser.
 
 Kernel proof checks additionally require **Lean v4.34.0**, including `lean` and `leanc`, normally installed through elan:
