@@ -2,6 +2,8 @@
 
 The browser, HTTP agents, replay CLI and persistent runner use the same Bend rules engine. Python supplies transports and optional policies, not a second rules implementation.
 
+Here, **agent** means a game-playing policy or client. Coding agents modifying the repository should start at [AGENTS.md](../AGENTS.md) and the [development task map](DEVELOPMENT.md); the interface details below remain the reference for game clients.
+
 ## Quick examples
 
 Run from the repository root after `bash scripts/build.sh`:

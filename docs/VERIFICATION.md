@@ -2,6 +2,8 @@
 
 Bend Grounds combines executable rules, explicit laws and finite regression tests. These are different kinds of evidence. This document describes their scope and how to invoke them; it is not a claim that the current checkout has passed every command.
 
+For change-specific check selection, use the [development task map](DEVELOPMENT.md) after the [coding-agent entrypoint](../AGENTS.md). This document remains the reference for verification commands and their evidence boundaries.
+
 ## Canonical release gate
 
 After setup, run from the repository root:

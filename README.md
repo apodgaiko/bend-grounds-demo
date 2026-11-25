@@ -21,6 +21,8 @@ Recruit a warband, build an economy and watch it clash. Combine three copies int
 
 **Runs locally.** No hosted demo, model download or API key is required. The authoritative engine, built-in bots, observations, legal actions and native HTTP backend are written in Bend 2; the browser is a vanilla JavaScript client.
 
+**Contributing with a coding agent?** Start with [AGENTS.md](AGENTS.md), then use the [development task map](docs/DEVELOPMENT.md) to load only the guidance relevant to your change. Game-playing policies use the separate [Agent API](docs/AGENTS-API.md).
+
 ## Build and play locally
 
 Requirements: Git, [Bun](https://bun.sh), a compatible Clang toolchain, Python 3, `curl` and `shasum`. Python game clients use only the standard library. The existing development baseline is macOS; portability is not claimed. See [Toolchain](docs/TOOLCHAIN.md) for the compiler pin and proof prerequisites.

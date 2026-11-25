@@ -1,5 +1,7 @@
 # Toolchain and native runtime
 
+For repository changes, read the [coding-agent entrypoint](../AGENTS.md) and choose a route in the [development task map](DEVELOPMENT.md). This document is the reference for compiler pins, prerequisites and native build/lifecycle commands.
+
 ## Which Bend?
 
 This project targets the **Bend 2** implementation at [bendlang/bend](https://github.com/bendlang/bend), pinned to:
